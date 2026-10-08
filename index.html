@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en" class="is-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kendberg — Mathematical and statistical approaches to markets</title>
+  <meta name="description" content="Kendberg is a proprietary trading firm that employs mathematical and statistical methods in the design and execution of its trading programs.">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kendberg">
+  <meta property="og:description" content="Mathematical and statistical approaches to markets. A research-led proprietary trading firm built from India.">
+  <meta property="og:image" content="assets/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- K mark (vector), reused everywhere via <use href="#k"> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="kg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="110" y2="100">
+        <stop offset="0" stop-color="#f4f1ec"/><stop offset=".55" stop-color="#9c978f"/><stop offset="1" stop-color="#e9e5de"/>
+      </linearGradient>
+    </defs>
+    <symbol id="k" viewBox="0 0 110 100">
+      <g fill="none" stroke="url(#kg)" stroke-width="1" vector-effect="non-scaling-stroke">
+        <rect x="8" y="8" width="22" height="84" vector-effect="non-scaling-stroke"/>
+        <path d="M19 18v64" vector-effect="non-scaling-stroke"/>
+        <path d="M30 50 72 8h24L30 74Z" vector-effect="non-scaling-stroke"/>
+        <path d="M30 62 84 8" vector-effect="non-scaling-stroke"/>
+        <path d="M46 58 80 92h24L58 46Z" vector-effect="non-scaling-stroke"/>
+        <path d="M52 52 92 92" vector-effect="non-scaling-stroke"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <!-- ============ PRELOADER ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <svg class="loader__k" viewBox="0 0 110 100">
+      <g fill="none" stroke="url(#kg)" stroke-width="1.2" vector-effect="non-scaling-stroke">
+        <rect x="8" y="8" width="22" height="84" pathLength="1"/>
+        <path d="M19 18v64" pathLength="1"/>
+        <path d="M30 50 72 8h24L30 74Z" pathLength="1"/>
+        <path d="M30 62 84 8" pathLength="1"/>
+        <path d="M46 58 80 92h24L58 46Z" pathLength="1"/>
+        <path d="M52 52 92 92" pathLength="1"/>
+      </g>
+    </svg>
+    <div class="loader__meta"><span>Kendberg</span><span id="count">000</span></div>
+  </div>
+
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__in">
+      <a href="#top" class="brand" aria-label="Kendberg, back to top">
+        <svg class="brand__k"><use href="#k"/></svg><span>Kendberg</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#firm">Firm</a>
+        <a href="#approach">Approach</a>
+        <a href="#culture">Culture</a>
+        <a href="#careers">Careers</a>
+      </nav>
+      <a href="#contact" class="pill nav__cta">Contact</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="menu" id="menu" aria-hidden="true">
+    <nav aria-label="Mobile">
+      <a href="#firm"><i>01</i>Firm</a>
+      <a href="#approach"><i>02</i>Approach</a>
+      <a href="#culture"><i>03</i>Culture</a>
+      <a href="#careers"><i>04</i>Careers</a>
+      <a href="#contact"><i>05</i>Contact</a>
+    </nav>
+    <p class="menu__foot">ayushtawary@gmail.com</p>
+  </div>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top">
+      <canvas class="hero__field" id="field" aria-hidden="true"></canvas>
+      <div class="grid-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+      <div class="hero__meta wrap">
+        <span class="mono fade">Proprietary trading firm</span>
+        <span class="mono fade">Research-led · Medium-frequency</span>
+      </div>
+
+      <div class="hero__body wrap">
+        <h1 class="hero__title" aria-label="Mathematical and statistical approaches to markets.">
+          <span class="line" aria-hidden="true"><span>Mathematical and</span></span>
+          <span class="line" aria-hidden="true"><span><em>statistical</em> approaches</span></span>
+          <span class="line" aria-hidden="true"><span>to markets.</span></span>
+        </h1>
+        <div class="hero__foot">
+          <p class="hero__desc fade">Kendberg is a proprietary trading firm that employs mathematical and statistical methods in the design and execution of its trading programs.</p>
+          <div class="hero__cta fade">
+            <a href="#approach" class="btn"><span>Our approach</span><i aria-hidden="true">→</i></a>
+            <a href="#contact" class="ulink">Contact</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__base wrap">
+        <span class="mono fade">Signal, not noise</span>
+        <a href="#firm" class="scroll mono fade" aria-label="Scroll to the firm section">Scroll <span></span></a>
+      </div>
+    </section>
+
+    <!-- ============ 01 FIRM ============ -->
+    <section class="sec" id="firm">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">01</span><span class="mono r">The Firm</span>
+        </header>
+        <p class="statement" data-words>Kendberg is a research-led proprietary trading firm. We build trading systems using mathematics, statistics and data, and we trade only our own capital. We start from Indian markets, with the ambition to become a global research-led trading firm built from India.</p>
+
+        <div class="split">
+          <div class="split__l">
+            <h2 class="h2 r">India’s research-first <em>white space.</em></h2>
+            <p class="body r">India has talent, liquidity and market depth, but no homegrown research-first proprietary trading institution at global scale yet. Kendberg is being built for that gap.</p>
+          </div>
+          <ol class="claims">
+            <li class="r"><span class="mono">i.</span>Most visible Indian quant firms focus on high-frequency trading and market making.</li>
+            <li class="r"><span class="mono">ii.</span>Kendberg is building a research-first, medium-frequency model.</li>
+            <li class="r"><span class="mono">iii.</span>Research is the core product and IP of the firm.</li>
+          </ol>
+        </div>
+
+        <figure class="effort r" aria-label="Where our effort goes: 80 percent research, 20 percent execution and operations">
+          <figcaption class="mono">Where our effort goes</figcaption>
+          <div class="effort__bar"><span class="effort__a"></span><span class="effort__b"></span></div>
+          <div class="effort__legend">
+            <span><b>80%</b>Research</span>
+            <span><b>20%</b>Execution &amp; operations</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Research</span><i></i><span>Validation</span><i></i><span>Risk control</span><i></i><span>Discipline</span><i></i><span>Data</span><i></i>
+        <span>Research</span><i></i><span>Validation</span><i></i><span>Risk control</span><i></i><span>Discipline</span><i></i><span>Data</span><i></i>
+      </div>
+    </div>
+
+    <!-- ============ 02 MODEL ============ -->
+    <section class="sec" id="model">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">02</span><span class="mono r">Business Model</span>
+        </header>
+        <h2 class="h2 h2--xl r">How we make <em>money.</em></h2>
+
+        <ol class="model">
+          <li class="r">
+            <span class="model__n">I</span>
+            <h3>Research</h3>
+            <p>Find mathematical and statistical edges in market data.</p>
+          </li>
+          <li class="r">
+            <span class="model__n">II</span>
+            <h3>Validate</h3>
+            <p>Test every idea across market conditions and regimes.</p>
+          </li>
+          <li class="r">
+            <span class="model__n">III</span>
+            <h3>Deploy</h3>
+            <p>Trade only robust strategies, always with risk control.</p>
+          </li>
+        </ol>
+
+        <blockquote class="quote r"><p>Our research IP is the foundation of the firm and our key differentiator.</p></blockquote>
+      </div>
+    </section>
+
+    <!-- ============ 03 APPROACH (sticky) ============ -->
+    <section class="sec" id="approach">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">03</span><span class="mono r">Approach</span>
+        </header>
+        <div class="process">
+          <div class="process__side">
+            <h2 class="h2 r">How we <em>work.</em></h2>
+            <p class="body r">Every strategy passes through the same disciplined research method before a single position is taken.</p>
+            <div class="process__meter r" aria-hidden="true">
+              <span class="process__num" id="pnum">01</span><span class="mono">/ 04</span>
+              <div class="process__track"><i id="pbar"></i></div>
+            </div>
+          </div>
+          <ol class="process__steps">
+            <li class="step" data-step="01">
+              <span class="mono">Step 01</span>
+              <h3>Generate ideas</h3>
+              <p>Convert observed market patterns into precise, testable rules.</p>
+            </li>
+            <li class="step" data-step="02">
+              <span class="mono">Step 02</span>
+              <h3>Test deeply</h3>
+              <p>Backtest across years of data, many stocks and different market conditions.</p>
+            </li>
+            <li class="step" data-step="03">
+              <span class="mono">Step 03</span>
+              <h3>Reject weak signals fast</h3>
+              <p>Only ideas that survive strict testing move forward. Most do not.</p>
+            </li>
+            <li class="step" data-step="04">
+              <span class="mono">Step 04</span>
+              <h3>Deploy with risk control</h3>
+              <p>Only risk-controlled strategies go live, with portfolio risk limits and daily monitoring.</p>
+            </li>
+          </ol>
+        </div>
+        <blockquote class="quote r"><p>Our edge comes from research discipline, not discretionary calls.</p></blockquote>
+      </div>
+    </section>
+
+    <!-- ============ 04 CULTURE ============ -->
+    <section class="sec" id="culture">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">04</span><span class="mono r">Operating Model</span>
+        </header>
+        <h2 class="h2 h2--xl r">An institutional <em>blueprint.</em></h2>
+
+        <ul class="pillars">
+          <li class="r"><span class="mono">04.1</span><h3>Research Culture</h3><p>Ideas are challenged, tested and documented before they are trusted.</p></li>
+          <li class="r"><span class="mono">04.2</span><h3>Employee Alignment</h3><p>Incentives tied to the long-term quality of the research.</p></li>
+          <li class="r"><span class="mono">04.3</span><h3>Data-Driven Process</h3><p>Decisions come from evidence, never from narrative.</p></li>
+          <li class="r"><span class="mono">04.4</span><h3>Quant Training</h3><p>Every hire is trained in the Kendberg research method.</p></li>
+          <li class="r"><span class="mono">04.5</span><h3>Research Database</h3><p>A growing, structured library of market data and tested ideas.</p></li>
+          <li class="r"><span class="mono">04.6</span><h3>Scalable Compute</h3><p>Infrastructure built to test more ideas, more rigorously.</p></li>
+        </ul>
+
+        <blockquote class="quote r"><p>Inspired by the operating standards of global quant institutions; built for Kendberg’s own research-first model.</p></blockquote>
+      </div>
+    </section>
+
+    <!-- ============ 05 FOUNDER + TRAJECTORY ============ -->
+    <section class="sec" id="founder">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">05</span><span class="mono r">Leadership</span>
+        </header>
+        <div class="founder">
+          <div class="founder__mark r" aria-hidden="true">
+            <svg><use href="#k"/></svg>
+          </div>
+          <div>
+            <p class="mono r">Founder</p>
+            <h2 class="h2 r">Ayush Tawar</h2>
+            <p class="body r">Founder-led research with three years of trading and systematic research. Ayush sets the research framework every Kendberg strategy is built on: convert market patterns into testable rules, then move each idea through backtesting, risk filters and only then live deployment.</p>
+          </div>
+        </div>
+
+        <div class="path">
+          <p class="mono r">The path ahead</p>
+          <ol>
+            <li class="r"><b>Foundation</b><span>Team, data stack, research database and execution architecture.</span></li>
+            <li class="r"><b>Controlled deployment</b><span>Live trading under portfolio risk limits and daily monitoring.</span></li>
+            <li class="r"><b>Research expansion</b><span>Broader multi-stock validation and continuous execution improvement.</span></li>
+            <li class="r"><b>Institutional scale</b><span>Institutional reporting, audited processes and a global research team.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 CAREERS ============ -->
+    <section class="sec" id="careers">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">06</span><span class="mono r">Careers</span>
+        </header>
+        <div class="split">
+          <div class="split__l">
+            <h2 class="h2 h2--xl r">Join the <em>research.</em></h2>
+          </div>
+          <div>
+            <p class="body r">We are building a team of smart quant researchers and engineers. We give them data, compute, tooling and training in our research method, so they can find more ideas across markets and instruments.</p>
+            <ul class="gives">
+              <li class="r">Data</li><li class="r">Compute</li><li class="r">Tooling</li><li class="r">Training</li>
+            </ul>
+          </div>
+        </div>
+
+        <ul class="roles">
+          <li class="r"><button type="button" data-role="Quant Researcher"><span class="mono">06.1</span><span class="roles__t">Quant Researcher</span><span class="roles__d">Turn market patterns into tested, robust strategies.</span><span class="roles__a" aria-hidden="true">Apply <i>→</i></span></button></li>
+          <li class="r"><button type="button" data-role="Quant Developer"><span class="mono">06.2</span><span class="roles__t">Quant Developer</span><span class="roles__d">Build the research, backtesting and execution systems.</span><span class="roles__a" aria-hidden="true">Apply <i>→</i></span></button></li>
+          <li class="r"><button type="button" data-role="Data Engineer"><span class="mono">06.3</span><span class="roles__t">Data Engineer</span><span class="roles__d">Own the research database and the pipelines that feed it.</span><span class="roles__a" aria-hidden="true">Apply <i>→</i></span></button></li>
+        </ul>
+        <p class="note r">Don’t see your role? <button type="button" class="ulink" data-role="Other">Send an open application</button></p>
+      </div>
+    </section>
+
+    <!-- ============ 07 CONTACT ============ -->
+    <section class="sec contact" id="contact">
+      <div class="wrap">
+        <header class="sec__head">
+          <span class="idx mono r">07</span><span class="mono r">Contact</span>
+        </header>
+        <h2 class="contact__big r">Start a <em>conversation.</em></h2>
+        <div class="contact__grid">
+          <dl class="details">
+            <div class="r"><dt class="mono">Firm</dt><dd>Kendberg — research-led proprietary trading firm</dd></div>
+            <div class="r"><dt class="mono">Founder</dt><dd>Ayush Tawar</dd></div>
+            <div class="r"><dt class="mono">Email</dt><dd><a class="ulink" href="mailto:ayushtawary@gmail.com">ayushtawary@gmail.com</a></dd></div>
+            <div class="r"><dt class="mono">Phone</dt><dd><a class="ulink" href="tel:+919309499672">+91 93094 99672</a></dd></div>
+          </dl>
+          <form class="form r" id="contact-form" action="https://formsubmit.co/ayushtawary@gmail.com" method="POST">
+            <input type="hidden" name="_subject" value="Kendberg — website enquiry">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="">
+            <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <label class="f"><input name="name" required autocomplete="name" placeholder=" "><span>Name</span></label>
+            <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email</span></label>
+            <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Message</span></label>
+            <button class="btn" type="submit"><span>Send message</span><i aria-hidden="true">→</i></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot__row">
+        <nav class="foot__links" aria-label="Footer">
+          <a href="#firm">Firm</a><a href="#approach">Approach</a><a href="#culture">Culture</a><a href="#careers">Careers</a><a href="#contact">Contact</a>
+        </nav>
+        <a class="ulink" href="mailto:ayushtawary@gmail.com">ayushtawary@gmail.com</a>
+      </div>
+      <p class="foot__disc">Kendberg is a private proprietary trading firm that trades its own capital. Nothing on this website is investment advice, an offer, or a solicitation to invest. Kendberg does not manage money for the public.</p>
+      <div class="foot__row foot__small mono">
+        <span class="lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Private proprietary trading firm</span>
+        <span>© <span id="year">2026</span> Kendberg</span>
+      </div>
+      <div class="foot__word" aria-hidden="true">Kendberg</div>
+    </div>
+  </footer>
+
+  <!-- ============ APPLY DRAWER ============ -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer__veil" data-close></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" data-lenis-prevent>
+      <button class="drawer__x" type="button" data-close aria-label="Close application">Close <i aria-hidden="true">×</i></button>
+      <p class="mono">Careers · Application</p>
+      <h2 class="h2" id="drawer-title">Apply to <em id="drawer-role">Kendberg</em></h2>
+      <form class="form" id="apply" action="https://formsubmit.co/ayushtawary@gmail.com" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_subject" value="Kendberg — new career application">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="">
+        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="f"><input name="name" required autocomplete="name" placeholder=" "><span>Name</span></label>
+        <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email</span></label>
+        <label class="f"><input type="tel" name="phone" autocomplete="tel" placeholder=" "><span>Phone</span></label>
+        <label class="f f--select"><select name="role" id="role" required>
+            <option>Quant Researcher</option><option>Quant Developer</option><option>Data Engineer</option><option>Other</option>
+          </select><span>Role</span></label>
+        <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Short message</span></label>
+        <label class="file"><input type="file" name="attachment" accept=".pdf,.doc,.docx"><span class="file__btn">Attach CV</span><span class="file__name" id="file-name">Optional · PDF or Word</span></label>
+        <button class="btn" type="submit"><span>Send application</span><i aria-hidden="true">→</i></button>
+      </form>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>

@@ -11,44 +11,18 @@
   <meta property="og:description" content="Mathematical and statistical approaches to markets. A research-led proprietary trading firm built from India.">
   <meta property="og:image" content="assets/og.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/k-logo.webp">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- K mark (vector), reused everywhere via <use href="#k"> -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <linearGradient id="kg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="110" y2="100">
-        <stop offset="0" stop-color="#f4f1ec"/><stop offset=".55" stop-color="#9c978f"/><stop offset="1" stop-color="#e9e5de"/>
-      </linearGradient>
-    </defs>
-    <symbol id="k" viewBox="0 0 110 100">
-      <g fill="none" stroke="url(#kg)" stroke-width="1" vector-effect="non-scaling-stroke">
-        <rect x="8" y="8" width="22" height="84" vector-effect="non-scaling-stroke"/>
-        <path d="M19 18v64" vector-effect="non-scaling-stroke"/>
-        <path d="M30 50 72 8h24L30 74Z" vector-effect="non-scaling-stroke"/>
-        <path d="M30 62 84 8" vector-effect="non-scaling-stroke"/>
-        <path d="M46 58 80 92h24L58 46Z" vector-effect="non-scaling-stroke"/>
-        <path d="M52 52 92 92" vector-effect="non-scaling-stroke"/>
-      </g>
-    </symbol>
-  </svg>
-
   <!-- ============ PRELOADER ============ -->
   <div class="loader" id="loader" aria-hidden="true">
-    <svg class="loader__k" viewBox="0 0 110 100">
-      <g fill="none" stroke="url(#kg)" stroke-width="1.2" vector-effect="non-scaling-stroke">
-        <rect x="8" y="8" width="22" height="84" pathLength="1"/>
-        <path d="M19 18v64" pathLength="1"/>
-        <path d="M30 50 72 8h24L30 74Z" pathLength="1"/>
-        <path d="M30 62 84 8" pathLength="1"/>
-        <path d="M46 58 80 92h24L58 46Z" pathLength="1"/>
-        <path d="M52 52 92 92" pathLength="1"/>
-      </g>
-    </svg>
+    <div class="loader__k"><img src="assets/k-logo.webp" alt="" width="752" height="672"></div>
     <div class="loader__meta"><span>Kendberg</span><span id="count">000</span></div>
   </div>
 
@@ -59,7 +33,7 @@
   <header class="nav" id="nav">
     <div class="nav__in">
       <a href="#top" class="brand" aria-label="Kendberg, back to top">
-        <svg class="brand__k"><use href="#k"/></svg><span>Kendberg</span>
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
       </a>
       <nav class="nav__links" aria-label="Primary">
         <a href="#firm">Firm</a>
@@ -256,7 +230,7 @@
         </header>
         <div class="founder">
           <div class="founder__mark r" aria-hidden="true">
-            <svg><use href="#k"/></svg>
+            <img src="assets/k-logo.webp" alt="" width="752" height="672" loading="lazy">
           </div>
           <div>
             <p class="mono r">Founder</p>

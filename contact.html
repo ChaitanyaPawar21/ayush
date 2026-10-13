@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Kendberg</title>
+  <meta name="description" content="Contact Kendberg, a research-led proprietary trading firm.">
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav solid">
+    <div class="nav__in">
+      <a href="index.html" class="brand" aria-label="Kendberg home">
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
+      </a>
+      <a href="careers.html" class="pill nav__cta">Careers</a>
+      <a href="login.html" class="pill nav__cta">Login</a>
+    </div>
+  </header>
+
+  <main class="page wrap">
+    <p class="mono">Contact</p>
+    <h1 class="contact__big">Start a <em>conversation.</em></h1>
+    <div class="contact__grid">
+      <dl class="details">
+        <div><dt class="mono">Firm</dt><dd>Kendberg — research-led proprietary trading firm</dd></div>
+        <div><dt class="mono">Founder</dt><dd>Ayush Tawar</dd></div>
+        <div><dt class="mono">Email</dt><dd><a class="ulink" href="mailto:ayushtawary@gmail.com">ayushtawary@gmail.com</a></dd></div>
+        <div><dt class="mono">Phone</dt><dd><a class="ulink" href="tel:+919309499672">+91 93094 99672</a></dd></div>
+      </dl>
+      <form class="form" id="contact-form" action="https://formsubmit.co/ayushtawary@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Kendberg — website enquiry">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="">
+        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="f"><input name="name" required autocomplete="name" placeholder=" "><span>Name</span></label>
+        <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email</span></label>
+        <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Message</span></label>
+        <button class="btn" type="submit"><span>Send message</span><i aria-hidden="true">→</i></button>
+      </form>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // FormSubmit returns here with ?sent=1; show a thank-you.
+    const here = location.href.split(/[?#]/)[0], toast = document.getElementById('toast');
+    document.querySelector('#contact-form [name=_next]').value = here + '?sent=1';
+    if (new URLSearchParams(location.search).has('sent')) {
+      toast.textContent = 'Thank you — we will be in touch shortly.';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 6000);
+      history.replaceState(null, '', here);
+    }
+  </script>
+</body>
+</html>

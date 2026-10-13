@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Login — Kendberg</title>
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav solid">
+    <div class="nav__in">
+      <a href="index.html" class="brand" aria-label="Kendberg home">
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
+      </a>
+      <a href="contact.html" class="pill">Contact us</a>
+    </div>
+  </header>
+
+  <main class="auth wrap">
+    <p class="mono">Client access</p>
+    <h1 class="h2">Log <em>in.</em></h1>
+    <form class="form" id="login" method="post">
+      <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email</span></label>
+      <label class="f"><input type="password" name="password" required autocomplete="current-password" placeholder=" "><span>Password</span></label>
+      <button class="btn" type="submit"><span>Log in</span><i aria-hidden="true">→</i></button>
+    </form>
+    <p class="body">Access is by invitation. <a class="ulink" href="contact.html">Contact us</a> for credentials.</p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    const form = document.getElementById('login');
+
+    sb.auth.getSession().then(({ data }) => { if (data.session) location.replace('dashboard.html'); });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      const { error } = await sb.auth.signInWithPassword({ email: form.email.value.trim(), password: form.password.value });
+      btn.disabled = false;
+      if (error) return toast(error.message);
+      location.replace('dashboard.html');
+    });
+  </script>
+</body>
+</html>

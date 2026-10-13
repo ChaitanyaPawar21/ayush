@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Dashboard — Kendberg</title>
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav solid">
+    <div class="nav__in">
+      <a href="index.html" class="brand" aria-label="Kendberg home">
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
+      </a>
+      <a href="admin.html" class="pill nav__cta" id="admin-link" hidden>Admin</a>
+      <button type="button" class="pill nav__cta" id="logout">Log out</button>
+    </div>
+  </header>
+
+  <main class="page wrap" id="dash" style="visibility:hidden">
+    <header class="dash-head">
+      <div>
+        <p class="mono">Dashboard</p>
+        <h1 class="h2 h2--sm">Welcome, <em id="who"></em></h1>
+      </div>
+      <div class="dash-cur">
+        <p class="mono"><i aria-hidden="true"></i>Latest report</p>
+        <h2 id="cur-title">No reports yet</h2>
+        <div class="bar" id="cur-bar" hidden>
+          <span class="mono" id="cur-date"></span>
+          <select class="sheet-pick" id="sheet-pick" aria-label="Sheet" hidden></select>
+          <button type="button" class="pill" id="cur-dl">Download</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="led" id="ledger" hidden></div>
+      <details class="table-toggle" id="sheet-box" hidden><summary class="mono">View full table</summary>
+        <div class="sheet" id="sheet"></div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <p class="mono">Past reports</p>
+      <ul class="rows" id="past"><li class="empty">None yet.</li></ul>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="auth.js"></script>
+  <script src="ledger.js"></script>
+  <script>
+    // ponytail: client-side guard only; the reports bucket itself is protected by storage RLS (logged-in users only).
+    const $ = id => document.getElementById(id);
+    let wb = null, current = null;
+
+    function renderSheet() {
+      // sheet_to_html escapes cell values.
+      $('sheet').innerHTML = XLSX.utils.sheet_to_html(wb.Sheets[$('sheet-pick').value], { header: '', footer: '' });
+    }
+
+    async function show(file) {
+      current = file;
+      $('cur-title').textContent = reportName(file.name);
+      $('cur-date').textContent = fmtDate(file.created_at);
+      $('cur-bar').hidden = false;
+      document.querySelectorAll('#past li').forEach(li => li.classList.toggle('on', li.dataset.name === file.name));
+      try {
+        const { data, error } = await sb.storage.from('reports').download(file.name);
+        if (error) throw error;
+        wb = XLSX.read(await data.arrayBuffer());
+        const isLedger = renderLedger($('ledger'), XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+        $('ledger').hidden = !isLedger;
+        $('sheet-box').open = !isLedger; // ledgers show the summary; other reports open straight to the table
+        $('sheet-pick').replaceChildren(...wb.SheetNames.map(n => new Option(n, n)));
+        $('sheet-pick').hidden = wb.SheetNames.length < 2;
+        renderSheet();
+        $('sheet-box').hidden = false;
+      } catch (e) { $('sheet-box').hidden = $('ledger').hidden = true; toast('Could not open this report: ' + e.message); }
+    }
+
+    $('sheet-pick').addEventListener('change', renderSheet);
+    $('cur-dl').addEventListener('click', () => downloadReport(current.name).catch(e => toast(e.message)));
+    $('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.replace('index.html'); });
+
+    sb.auth.getSession().then(async ({ data }) => {
+      const user = data.session?.user;
+      if (!user) return location.replace('login.html');
+      $('who').textContent = user.user_metadata?.name || user.email;
+      $('admin-link').hidden = !isAdmin(user);
+      $('dash').style.visibility = '';
+
+      try {
+        const files = await listReports();
+        if (!files.length) return;
+        $('past').replaceChildren(...files.map(f => {
+          const li = reportRow(reportName(f.name), fmtDate(f.created_at), [
+            ['View', () => { show(f); scrollTo({ top: 0, behavior: 'smooth' }); }],
+            ['Download', () => downloadReport(f.name).catch(e => toast(e.message))],
+          ]);
+          li.dataset.name = f.name;
+          return li;
+        }));
+        show(files[0]);
+      } catch (e) { toast('Could not load reports: ' + e.message); }
+    });
+  </script>
+</body>
+</html>

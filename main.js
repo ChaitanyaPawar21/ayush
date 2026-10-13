@@ -168,20 +168,6 @@ const stmt = $('[data-words]');
 stmt.innerHTML = stmt.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
 const words = $$('.w', stmt);
 
-// ---------- Sticky process ----------
-const steps = $$('.step'), pnum = $('#pnum'), pbar = $('#pbar');
-const stepIO = new IntersectionObserver(es => es.forEach(e => {
-  if (!e.isIntersecting) return;
-  steps.forEach(s => s.classList.toggle('active', s === e.target));
-  const n = e.target.dataset.step;
-  if (pnum.textContent !== n) {
-    pnum.classList.add('swap');
-    setTimeout(() => { pnum.textContent = n; pnum.classList.remove('swap'); }, 250);
-  }
-  pbar.style.transform = `scaleX(${+n / steps.length})`;
-}), { rootMargin: '-45% 0px -45% 0px' });
-steps.forEach(s => stepIO.observe(s));
-
 // ---------- Header + scroll-driven bits ----------
 const nav = $('#nav');
 let lastY = 0, ticking = false;
@@ -203,9 +189,9 @@ const links = $$('.nav__links a');
 const navIO = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) links.forEach(l => l.classList.toggle('on', l.hash === '#' + e.target.id));
 }), { rootMargin: '-50% 0px -50% 0px' });
-['firm', 'approach', 'culture', 'careers', 'contact'].forEach(id => navIO.observe($('#' + id)));
+navIO.observe($('#firm'));
 
-// ---------- Cursor ring + pillar glow (mouse only) ----------
+// ---------- Cursor ring (mouse only) ----------
 if (fine && !reduce) {
   const cur = $('#cursor');
   let mx = -100, my = -100, cx = -100, cy = -100;
@@ -216,50 +202,10 @@ if (fine && !reduce) {
     cur.style.transform = `translate(${cx}px, ${cy}px)`;
     requestAnimationFrame(loop);
   })();
-  document.addEventListener('pointerover', e => cur.classList.toggle('big', !!e.target.closest('a, button, label, .pillars li')));
-
-  $$('.pillars li').forEach(li => li.addEventListener('pointermove', e => {
-    const b = li.getBoundingClientRect();
-    li.style.setProperty('--x', e.clientX - b.left + 'px');
-    li.style.setProperty('--y', e.clientY - b.top + 'px');
-  }));
+  document.addEventListener('pointerover', e => cur.classList.toggle('big', !!e.target.closest('a, button, label')));
 }
 
-// ---------- Apply drawer ----------
-const drawer = $('#drawer'), roleSel = $('#role'), roleName = $('#drawer-role');
-let lastFocus = null;
-function openDrawer(role) {
-  roleSel.value = role;
-  roleName.textContent = role === 'Other' ? 'Kendberg' : role;
-  lastFocus = document.activeElement;
-  drawer.classList.add('open'); drawer.setAttribute('aria-hidden', 'false');
-  lenis?.stop(); root.style.overflow = 'hidden';
-  setTimeout(() => $('#apply [name=name]').focus(), 700);
-}
-function closeDrawer() {
-  if (!drawer.classList.contains('open')) return;
-  drawer.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true');
-  lenis?.start(); root.style.overflow = '';
-  lastFocus?.focus({ preventScroll: true });
-}
-$$('[data-role]').forEach(b => b.addEventListener('click', () => openDrawer(b.dataset.role)));
-$$('[data-close]').forEach(b => b.addEventListener('click', closeDrawer));
-roleSel.addEventListener('change', () => { roleName.textContent = roleSel.value === 'Other' ? 'Kendberg' : roleSel.value; });
-addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); setMenu(false); } });
-$('#apply [type=file]').addEventListener('change', e => { $('#file-name').textContent = e.target.files[0]?.name || 'Optional · PDF or Word'; });
-
-// ---------- Forms (FormSubmit): return here with a thank-you ----------
-const here = location.href.split(/[?#]/)[0];
-$('#apply [name=_next]').value = here + '?sent=apply#careers';
-$('#contact-form [name=_next]').value = here + '?sent=contact#contact';
-const sent = new URLSearchParams(location.search).get('sent');
-if (sent) {
-  const t = $('#toast');
-  t.textContent = sent === 'apply' ? 'Thank you — your application has been received.' : 'Thank you — we will be in touch shortly.';
-  setTimeout(() => t.classList.add('show'), 2400);
-  setTimeout(() => t.classList.remove('show'), 8000);
-  history.replaceState(null, '', here + location.hash);
-}
+addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
 $('#year').textContent = new Date().getFullYear();
 

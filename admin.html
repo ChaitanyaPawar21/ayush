@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin — Kendberg</title>
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav solid">
+    <div class="nav__in">
+      <a href="index.html" class="brand" aria-label="Kendberg home">
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
+      </a>
+      <a href="dashboard.html" class="pill nav__cta">Dashboard</a>
+      <button type="button" class="pill nav__cta" id="logout">Log out</button>
+    </div>
+  </header>
+
+  <main class="page wrap" id="admin" style="visibility:hidden">
+    <p class="mono">Admin</p>
+    <h1 class="h2 h2--sm">Users &amp; <em>reports.</em></h1>
+
+    <section class="panel">
+      <p class="mono">Add user</p>
+      <h2>Create login</h2>
+      <form class="form" id="add-user" method="post">
+        <label class="f"><input name="name" required autocomplete="off" placeholder=" "><span>Name</span></label>
+        <label class="f"><input type="email" name="email" required autocomplete="off" placeholder=" "><span>Email</span></label>
+        <label class="f"><input type="text" name="password" required minlength="8" autocomplete="new-password" placeholder=" "><span>Password (min 8 characters)</span></label>
+        <button class="btn" type="submit"><span>Create user</span><i aria-hidden="true">→</i></button>
+      </form>
+      <ul class="rows" id="users"><li class="empty">Loading…</li></ul>
+    </section>
+
+    <section class="panel">
+      <p class="mono">Reports</p>
+      <h2>Upload Excel report</h2>
+      <p class="body">Every logged-in user sees the newest report on their dashboard; older ones stay listed as past reports.</p>
+      <form class="form" id="upload">
+        <label class="file"><input type="file" name="file" accept=".xlsx,.xls,.csv" required><span class="file__btn">Choose file</span><span class="file__name" id="file-name">.xlsx, .xls or .csv · max 20 MB</span></label>
+        <button class="btn" type="submit"><span>Upload report</span><i aria-hidden="true">→</i></button>
+      </form>
+      <ul class="rows" id="reports"><li class="empty">Loading…</li></ul>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    // ponytail: this page check is UI only; the admin-users edge function and storage RLS enforce admin rights.
+    const $ = id => document.getElementById(id);
+    const MIME = { xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', xls: 'application/vnd.ms-excel', csv: 'text/csv' };
+
+    async function call(body) {
+      const { data, error } = await sb.functions.invoke('admin-users', { body });
+      if (error) {
+        let msg = error.message;
+        try { msg = (await error.context.json()).error || msg; } catch {}
+        throw new Error(msg);
+      }
+      return data;
+    }
+
+    async function loadUsers() {
+      try {
+        const { users } = await call({ action: 'list' });
+        $('users').replaceChildren(...users.map(u => reportRow(
+          (u.name ? u.name + ' · ' : '') + u.email,
+          u.last_sign_in_at ? 'Last login ' + fmtDate(u.last_sign_in_at) : 'Never logged in',
+          ADMINS.includes(u.email) ? [] : [['Remove', async () => {
+            if (!confirm(`Remove ${u.email}? They will no longer be able to log in.`)) return;
+            try { await call({ action: 'delete', id: u.id }); toast('User removed'); loadUsers(); } catch (e) { toast(e.message); }
+          }]]
+        )));
+        if (!users.length) $('users').innerHTML = '<li class="empty">No users yet.</li>';
+      } catch (e) { $('users').innerHTML = '<li class="empty">Could not load users.</li>'; toast(e.message); }
+    }
+
+    async function loadReports() {
+      try {
+        const files = await listReports();
+        $('reports').replaceChildren(...files.map(f => reportRow(reportName(f.name), fmtDate(f.created_at), [
+          ['Download', () => downloadReport(f.name).catch(e => toast(e.message))],
+          ['Delete', async () => {
+            if (!confirm(`Delete ${reportName(f.name)}? Users will no longer see it.`)) return;
+            const { error } = await sb.storage.from('reports').remove([f.name]);
+            if (error) return toast(error.message);
+            toast('Report deleted'); loadReports();
+          }],
+        ])));
+        if (!files.length) $('reports').innerHTML = '<li class="empty">No reports yet.</li>';
+      } catch (e) { $('reports').innerHTML = '<li class="empty">Could not load reports.</li>'; toast(e.message); }
+    }
+
+    $('add-user').addEventListener('submit', async e => {
+      e.preventDefault();
+      const f = e.target, btn = f.querySelector('button');
+      btn.disabled = true;
+      try {
+        await call({ action: 'create', name: f.name.value, email: f.email.value, password: f.password.value });
+        toast(`User created. Send ${f.email.value.trim()} their password.`);
+        f.reset(); loadUsers();
+      } catch (err) { toast(err.message); }
+      btn.disabled = false;
+    });
+
+    $('upload').file.addEventListener('change', e => { $('file-name').textContent = e.target.files[0]?.name || '.xlsx, .xls or .csv · max 20 MB'; });
+    $('upload').addEventListener('submit', async e => {
+      e.preventDefault();
+      const file = e.target.file.files[0], btn = e.target.querySelector('button');
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!MIME[ext]) return toast('Choose an .xlsx, .xls or .csv file');
+      btn.disabled = true;
+      // Timestamp prefix keeps every upload unique, so past reports are never overwritten.
+      const path = `${Date.now()}__${file.name.replace(/[^\w.\- ()]/g, '_')}`;
+      const { error } = await sb.storage.from('reports').upload(path, file, { contentType: MIME[ext] });
+      btn.disabled = false;
+      if (error) return toast(error.message);
+      toast('Report uploaded'); e.target.reset(); $('file-name').textContent = '.xlsx, .xls or .csv · max 20 MB';
+      loadReports();
+    });
+
+    $('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.replace('index.html'); });
+
+    sb.auth.getSession().then(({ data }) => {
+      const user = data.session?.user;
+      if (!user) return location.replace('login.html');
+      if (!isAdmin(user)) return location.replace('dashboard.html');
+      $('admin').style.visibility = '';
+      loadUsers(); loadReports();
+    });
+  </script>
+</body>
+</html>

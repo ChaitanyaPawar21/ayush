@@ -1,17 +1,21 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact — Kendberg</title>
   <meta name="description" content="Contact Kendberg, a research-led proprietary trading firm.">
   <meta name="theme-color" content="#0b0b0b">
-  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="icon" type="image/png" href="assets/favicon-k.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <header class="nav solid">
     <div class="nav__in">
@@ -19,30 +23,76 @@
         <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
       </a>
       <!-- <a href="careers.html" class="pill nav__cta">Careers</a> -->
-      <a href="firm.html" class="pill nav__cta">What we do</a>
+      <a href="firm.html" class="nav__plain">About</a>
       <a href="login.html" class="pill nav__cta">Login</a>
     </div>
   </header>
 
   <main class="page wrap">
     <p class="mono">Contact</p>
-    <h1 class="contact__big">Start a <em>conversation.</em></h1>
+    <p class="contact__lead">For inquiries related to Investment or Careers, please fill out the form.</p>
     <div class="contact__grid">
-      <dl class="details">
-        <div><dt class="mono">Firm</dt><dd>Kendberg — research-led proprietary trading firm</dd></div>
-        <div><dt class="mono">Founder</dt><dd>Ayush Tawar</dd></div>
-        <div><dt class="mono">Email</dt><dd><a class="ulink" href="mailto:ayushtawary@gmail.com">ayushtawary@gmail.com</a></dd></div>
-        <div><dt class="mono">Phone</dt><dd><a class="ulink" href="tel:+919309499672">+91 93094 99672</a></dd></div>
-      </dl>
-      <form class="form" id="contact-form" action="https://formsubmit.co/ayushtawary@gmail.com" method="POST">
-        <input type="hidden" name="_subject" value="Kendberg — website enquiry">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_next" value="">
-        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="f"><input name="name" required autocomplete="name" placeholder=" "><span>Name</span></label>
-        <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email</span></label>
-        <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Message</span></label>
+      <form class="form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="a8a3bc6b-2eb8-4432-9cd9-3a6cf88917ee">
+        <input type="hidden" name="subject" value="Kendberg — website enquiry">
+        <input type="hidden" name="from_name" value="Kendberg website">
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="f"><input name="name" required autocomplete="name" placeholder=" "><span>Name *</span></label>
+        <label class="f"><input type="email" name="email" required autocomplete="email" placeholder=" "><span>Email
+            *</span></label>
+        <div class="f-phone">
+          <label class="f f--select"><select name="phone_code" autocomplete="tel-country-code">
+              <option value="+91" data-cc="in">India (+91)</option>
+              <option value="+1" data-cc="us">US / Canada (+1)</option>
+              <option value="+44" data-cc="gb">United Kingdom (+44)</option>
+              <option value="+971" data-cc="ae">UAE (+971)</option>
+              <option value="+65" data-cc="sg">Singapore (+65)</option>
+              <option value="+852" data-cc="hk">Hong Kong (+852)</option>
+              <option value="+61" data-cc="au">Australia (+61)</option>
+              <option value="+49" data-cc="de">Germany (+49)</option>
+              <option value="+33" data-cc="fr">France (+33)</option>
+              <option value="+41" data-cc="ch">Switzerland (+41)</option>
+              <option value="+31" data-cc="nl">Netherlands (+31)</option>
+              <option value="+353" data-cc="ie">Ireland (+353)</option>
+              <option value="+39" data-cc="it">Italy (+39)</option>
+              <option value="+34" data-cc="es">Spain (+34)</option>
+              <option value="+81" data-cc="jp">Japan (+81)</option>
+              <option value="+82" data-cc="kr">South Korea (+82)</option>
+              <option value="+86" data-cc="cn">China (+86)</option>
+              <option value="+966" data-cc="sa">Saudi Arabia (+966)</option>
+              <option value="+974" data-cc="qa">Qatar (+974)</option>
+              <option value="+973" data-cc="bh">Bahrain (+973)</option>
+              <option value="+965" data-cc="kw">Kuwait (+965)</option>
+              <option value="+968" data-cc="om">Oman (+968)</option>
+              <option value="+60" data-cc="my">Malaysia (+60)</option>
+              <option value="+62" data-cc="id">Indonesia (+62)</option>
+              <option value="+66" data-cc="th">Thailand (+66)</option>
+              <option value="+63" data-cc="ph">Philippines (+63)</option>
+              <option value="+84" data-cc="vn">Vietnam (+84)</option>
+              <option value="+977" data-cc="np">Nepal (+977)</option>
+              <option value="+880" data-cc="bd">Bangladesh (+880)</option>
+              <option value="+94" data-cc="lk">Sri Lanka (+94)</option>
+              <option value="+92" data-cc="pk">Pakistan (+92)</option>
+              <option value="+27" data-cc="za">South Africa (+27)</option>
+              <option value="+234" data-cc="ng">Nigeria (+234)</option>
+              <option value="+254" data-cc="ke">Kenya (+254)</option>
+              <option value="+55" data-cc="br">Brazil (+55)</option>
+              <option value="+52" data-cc="mx">Mexico (+52)</option>
+              <option value="+7" data-cc="ru">Russia (+7)</option>
+              <option value="+90" data-cc="tr">Turkey (+90)</option>
+              <option value="+64" data-cc="nz">New Zealand (+64)</option>
+            </select><span>Code</span></label>
+          <label class="f"><input type="tel" name="phone" autocomplete="tel-national" inputmode="tel"
+              pattern="[0-9 ()-]{6,20}" placeholder=" "><span>Phone (optional)</span></label>
+        </div>
+        <fieldset class="choice">
+          <legend>Reason for contact *</legend>
+          <label><input type="radio" name="reason" value="Career" required><span>Career</span></label>
+          <label><input type="radio" name="reason" value="Investment"><span>Investment</span></label>
+          <label><input type="radio" name="reason" value="Other"><span>Other</span></label>
+        </fieldset>
+        <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Message
+            *</span></label>
         <button class="btn" type="submit"><span>Send message</span><i aria-hidden="true">→</i></button>
       </form>
     </div>
@@ -51,15 +101,86 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // FormSubmit returns here with ?sent=1; show a thank-you.
-    const here = location.href.split(/[?#]/)[0], toast = document.getElementById('toast');
-    document.querySelector('#contact-form [name=_next]').value = here + '?sent=1';
-    if (new URLSearchParams(location.search).has('sent')) {
-      toast.textContent = 'Thank you — we will be in touch shortly.';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 6000);
-      history.replaceState(null, '', here);
-    }
+    // Send through Web3Forms without leaving the page; without JS the form still posts normally.
+    const form = document.getElementById('contact-form'), toast = document.getElementById('toast'), btn = form.querySelector('button span');
+    // Country code picker: a styled list with flags over the native select, which still holds the value.
+    const sel = form.querySelector('select[name="phone_code"]');
+    const flag = cc => `<img src="https://flagcdn.com/${cc}.svg" alt="" width="20" height="15">`;
+    const pick = document.createElement('div');
+    pick.className = 'cc';
+    pick.innerHTML = `<button type="button" class="cc__btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Country code"></button>
+      <div class="cc__pop" hidden>
+        <input class="cc__q" type="search" placeholder="Search country or code" aria-label="Search country" autocomplete="off">
+        <ul class="cc__list" role="listbox" aria-label="Country code">${[...sel.options].map((o, i) =>
+          `<li role="option" id="cc-${i}" data-i="${i}">${flag(o.dataset.cc)}<span>${o.text.replace(/ \(.*/, '')}</span><b>${o.value}</b></li>`).join('')}</ul>
+      </div>`;
+    sel.after(pick);
+    sel.hidden = true;
+    const ccBtn = pick.querySelector('.cc__btn'), pop = pick.querySelector('.cc__pop'), q = pick.querySelector('.cc__q'), list = pick.querySelector('.cc__list');
+    const items = [...list.children];
+    let at = -1;
+    const show = () => {
+      const o = sel.selectedOptions[0];
+      ccBtn.innerHTML = `${flag(o.dataset.cc)}<span>${o.value}</span>`;
+      items.forEach((li, i) => li.setAttribute('aria-selected', i === sel.selectedIndex));
+    };
+    const hi = i => {
+      at = i;
+      items.forEach(li => li.classList.toggle('on', li === items[i]));
+      items[i]?.scrollIntoView({ block: 'nearest' });
+      q.setAttribute('aria-activedescendant', items[i]?.id || '');
+    };
+    const filter = () => {
+      const s = q.value.trim().toLowerCase();
+      items.forEach(li => li.hidden = !!s && !li.textContent.toLowerCase().includes(s));
+      hi(items.findIndex(li => !li.hidden));
+    };
+    const open = on => {
+      pop.hidden = !on;
+      ccBtn.setAttribute('aria-expanded', on);
+      if (on) { q.value = ''; filter(); hi(sel.selectedIndex); q.focus(); }
+    };
+    const choose = i => { sel.selectedIndex = i; show(); open(false); ccBtn.focus(); };
+    ccBtn.addEventListener('click', () => open(pop.hidden));
+    q.addEventListener('input', filter);
+    q.addEventListener('keydown', e => {
+      const vis = items.filter(li => !li.hidden), k = vis.indexOf(items[at]);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const next = vis[Math.min(vis.length - 1, Math.max(0, k + (e.key === 'ArrowDown' ? 1 : -1)))];
+        if (next) hi(items.indexOf(next));
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (items[at] && !items[at].hidden) choose(at);
+      } else if (e.key === 'Escape') { open(false); ccBtn.focus(); }
+    });
+    list.addEventListener('mousedown', e => e.preventDefault()); // keep focus in the search box so the list stays open
+    list.addEventListener('mousemove', e => { const li = e.target.closest('li'); if (li && +li.dataset.i !== at) hi(+li.dataset.i); });
+    list.addEventListener('click', e => { const li = e.target.closest('li'); if (li) choose(+li.dataset.i); });
+    pick.addEventListener('focusout', e => { if (!pick.contains(e.relatedTarget)) open(false); });
+    show();
+
+    const say = msg => { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 6000); };
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      if (!data.get('phone')) data.delete('phone_code');
+      data.set('subject', `Kendberg — ${data.get('reason')} enquiry`);
+      btn.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        const out = await res.json();
+        if (!out.success) throw new Error(out.message);
+        form.reset();
+        show();
+        say('Thank you — we will be in touch shortly.');
+      } catch (err) {
+        say('Sorry, that did not send. Please email ayushtawary@gmail.com.');
+      } finally {
+        btn.textContent = 'Send message';
+      }
+    });
   </script>
 </body>
+
 </html>

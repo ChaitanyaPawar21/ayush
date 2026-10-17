@@ -55,6 +55,7 @@ const field = (() => {
     free = Array.from({ length: W < 700 ? 50 : 110 }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25 }));
   }
 
+  const buckets = [[], [], [], [], []];
   const easeOut = t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
   function frame(now) {
@@ -71,8 +72,8 @@ const field = (() => {
     }
     ctx.fill();
 
-    // histogram dots, bucketed by alpha to keep draw calls low
-    const buckets = [[], [], [], [], []];
+    // histogram dots, bucketed by alpha to keep draw calls low (arrays reused, no per-frame garbage)
+    for (const b of buckets) b.length = 0;
     for (const d of dots) {
       const p = easeOut(clamp((t - d.delay) / 2.4, 0, 1));
       const breathe = 1 + .045 * Math.sin(t * .9 + d.i * .32);

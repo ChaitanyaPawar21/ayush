@@ -91,7 +91,7 @@
           <label><input type="radio" name="reason" value="Investment"><span>Investment</span></label>
           <label><input type="radio" name="reason" value="Other"><span>Other</span></label>
         </fieldset>
-        <label class="f"><textarea name="message" rows="3" required placeholder=" "></textarea><span>Message
+        <label class="f"><textarea data-lenis-prevent name="message" rows="3" required placeholder=" "></textarea><span>Message
             *</span></label>
         <button class="btn" type="submit"><span>Send message</span><i aria-hidden="true">→</i></button>
       </form>
@@ -111,7 +111,7 @@
     pick.innerHTML = `<button type="button" class="cc__btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Country code"></button>
       <div class="cc__pop" hidden>
         <input class="cc__q" type="search" placeholder="Search country or code" aria-label="Search country" autocomplete="off">
-        <ul class="cc__list" role="listbox" aria-label="Country code">${[...sel.options].map((o, i) =>
+        <ul class="cc__list" data-lenis-prevent role="listbox" aria-label="Country code">${[...sel.options].map((o, i) =>
           `<li role="option" id="cc-${i}" data-i="${i}">${flag(o.dataset.cc)}<span>${o.text.replace(/ \(.*/, '')}</span><b>${o.value}</b></li>`).join('')}</ul>
       </div>`;
     sel.after(pick);
@@ -181,6 +181,8 @@
       }
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="smooth.js" defer></script>
 </body>
 
 </html>

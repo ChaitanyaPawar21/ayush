@@ -19,12 +19,12 @@
 <body>
   <header class="nav solid">
     <div class="nav__in">
-      <a href="index.html" class="brand" aria-label="Kendberg home">
+      <a href="/" class="brand" aria-label="Kendberg home">
         <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
       </a>
-      <!-- <a href="careers.html" class="pill nav__cta">Careers</a> -->
-      <a href="firm.html" class="nav__plain">About</a>
-      <a href="login.html" class="pill nav__cta">Login</a>
+      <a href="/about" class="nav__plain">About</a>
+      <a href="/contact" class="nav__plain" aria-current="page">Contact</a>
+      <a href="/login" class="pill nav__cta">Login</a>
     </div>
   </header>
 
@@ -175,13 +175,13 @@
         show();
         say('Thank you — we will be in touch shortly.');
       } catch (err) {
-        say('Sorry, that did not send. Please email ayushtawary@gmail.com.');
+        say('Sorry, that did not send. Please try again in a moment.');
       } finally {
         btn.textContent = 'Send message';
       }
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="lenis.min.js" defer></script>
   <script src="smooth.js" defer></script>
 </body>
 

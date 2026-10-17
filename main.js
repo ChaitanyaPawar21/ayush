@@ -29,10 +29,12 @@ const field = (() => {
     // on desktop, start the bell just clear of where the headline text ends
     const range = document.createRange(); range.selectNodeContents(title);
     const textRight = range.getBoundingClientRect().right - c.getBoundingClientRect().left;
-    const x0 = mobile ? W * .04 : Math.max(W * .39, textRight - W * .21), x1 = mobile ? W * .96 : x0 + W * .61, bw = (x1 - x0) / bins;
+    const x0 = mobile ? W * .04 : Math.max(W * .39, textRight - W * .21), x1 = mobile ? W * .96 : W, bw = (x1 - x0) / bins; // bell always ends at the right edge
     gap = bw * .62; r = Math.max(1, bw * .13);
     const base = H - r - 6, // bottom row rests on the footer line
-          maxH = Math.floor(H * (mobile ? .42 : .55) / gap), sd = bins / 6.4;
+          // on phones the bell fills whatever height is left under the text block, and runs wider
+          room = mobile ? base - (title.parentNode.getBoundingClientRect().bottom - c.getBoundingClientRect().top) - 28 : Infinity,
+          maxH = Math.floor(Math.min(H * (mobile ? .45 : .55), room) / gap), sd = bins / (mobile ? 4.4 : 6.4);
     // height in rows at column fi: the bell, plus tails that rise from two rows at each screen edge
     const cx = x0 + bw * bins / 2;
     const rows = fi => {
@@ -116,7 +118,8 @@ const field = (() => {
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? play() : (running = false); }).observe(hero);
   hero.addEventListener('pointermove', e => { const b = c.getBoundingClientRect(); mouse.x = e.clientX - b.left; mouse.y = e.clientY - b.top; });
   hero.addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (reduce) { running = true; frame(t0 + 1e7); running = false; } }, 200); });
+  // skip same-size resizes (mobile address bar showing/hiding), which would reshuffle the dots mid-scroll
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (c.clientWidth === W && c.clientHeight === H) return; build(); if (reduce) { running = true; frame(t0 + 1e7); running = false; } }, 200); });
 
   return {
     start: () => document.fonts.ready.then(() => { // fonts first, so the text width is final
@@ -128,39 +131,21 @@ const field = (() => {
 })();
 
 // ---------- Preloader ----------
-const count = $('#count');
 const finishLoad = () => { root.classList.remove('is-loading'); root.classList.add('loaded'); field.start(); };
 if (reduce) {
   finishLoad();
 } else {
   lenis?.stop();
-  const t0 = performance.now(), dur = 1700;
-  (function tick(now) {
-    const p = clamp((now - t0) / dur, 0, 1), e = 1 - Math.pow(1 - p, 3);
-    count.textContent = String(Math.round(e * 100)).padStart(3, '0');
-    if (p < 1) return requestAnimationFrame(tick);
-    setTimeout(() => { finishLoad(); lenis?.start(); }, 250);
-  })(t0);
+  setTimeout(() => { finishLoad(); lenis?.start(); }, 1950); // let the K's entrance play out
 }
 
-
-// ---------- Mobile menu ----------
-const burger = $('#burger'), menu = $('#menu');
-const setMenu = open => {
-  root.classList.toggle('menu-open', open);
-  burger.setAttribute('aria-expanded', open);
-  burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  menu.setAttribute('aria-hidden', !open);
-  open ? lenis?.stop() : lenis?.start();
-};
-burger.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
 
 // ---------- Anchor links ----------
 $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
   const el = $(a.getAttribute('href'));
   if (!el) return;
   e.preventDefault();
-  if (root.classList.contains('menu-open')) { setMenu(false); setTimeout(() => scrollTo(el), 350); } else scrollTo(el);
+  scrollTo(el);
 }));
 
 // ---------- Reveal on scroll ----------
@@ -175,14 +160,13 @@ let lastY = 0, ticking = false;
 function onScroll() {
   const y = scrollY;
   nav.classList.toggle('solid', y > 30);
-  nav.classList.toggle('hide', y > 500 && y > lastY + 2 && !root.classList.contains('menu-open'));
+  nav.classList.toggle('hide', y > 500 && y > lastY + 2);
   if (y < lastY - 2) nav.classList.remove('hide');
   lastY = y; ticking = false;
 }
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
 onScroll();
 
-addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
 
 // ---------- Optional analytics ----------

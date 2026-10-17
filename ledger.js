@@ -79,7 +79,7 @@ function balanceChart(fig, pts) {
   const line = pts.map((p, i) => (i ? `H${x(p.date)}V${y(p.value)}` : `M${x(p.date)},${y(p.value)}`)).join('');
   const ticks = [0, max / 2, max];
   const xt = pts.length > 1 ? [pts[0], pts.at(-1)] : [pts[0]];
-  fig.querySelector('.led__plot').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Account balance over time, from ${inr(pts[0].value)} to ${inr(pts.at(-1).value)}">
+  fig.querySelector('.led__plot').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running Balance over time, from ${inr(pts[0].value)} to ${inr(pts.at(-1).value)}">
     <defs><linearGradient id="led-area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ece8e1" stop-opacity=".16"/><stop offset="1" stop-color="#ece8e1" stop-opacity="0"/></linearGradient></defs>
     ${ticks.map(v => `<line class="led__grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="led__ax" x="${L - 10}" y="${y(v) + 4}" text-anchor="end">${inrAxis(v)}</text>`).join('')}
     ${xt.map((p, i) => `<text class="led__ax" x="${x(p.date)}" y="${H - 10}" text-anchor="${i ? 'end' : 'start'}">${shortDate(p.date)}</text>`).join('')}
@@ -141,7 +141,7 @@ function renderLedger(el, rows) {
   ].filter(Boolean).join('  ');
   el.innerHTML = `
     <div class="led__top"><div class="led__hero">
-      <p class="mono">Account balance · as of ${fmtDate(s.asOf)}</p>
+      <p class="mono">Running Balance · as of ${fmtDate(s.asOf)}</p>
       <p class="led__big">${big[0]}<span>.${big[1]}</span></p>
       <p class="led__bridge mono">${bridge}</p>
     </div>
@@ -152,7 +152,7 @@ function renderLedger(el, rows) {
       <div><dt class="mono">Profitable days</dt><dd>${s.greenDays} <small>of ${s.pnl.length}</small></dd></div>
     </dl></div>
     <div class="led__charts">
-      <figure class="led__fig" id="led-bal"><figcaption class="mono">Account balance</figcaption><div class="led__plot"></div></figure>
+      <figure class="led__fig" id="led-bal"><figcaption class="mono">Running Balance</figcaption><div class="led__plot"></div></figure>
       ${s.pnl.length ? `<figure class="led__fig" id="led-pnl"><figcaption class="mono">Trading P&amp;L by day
         <span class="led__key"><i class="led__gain"></i>Gain</span><span class="led__key"><i class="led__loss"></i>Loss</span></figcaption><div class="led__plot"></div></figure>` : ''}
     </div>`;

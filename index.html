@@ -11,15 +11,16 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Kendberg">
   <meta property="og:description"
-    content="Mathematical and statistical approaches to markets. A research-led proprietary trading firm built from India.">
-  <meta property="og:image" content="assets/og.jpg">
+    content="A proprietary trading firm that integrates mathematical modelling and statistical research to develop systematic approaches to financial markets.">
+  <meta property="og:image" content="https://www.kendberg.com/assets/og.jpg">
+  <meta property="og:url" content="https://www.kendberg.com/">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/favicon-k.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Newsreader&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap"
     rel="stylesheet">
   <link rel="preload" as="image" href="assets/k-logo.webp">
   <link rel="stylesheet" href="styles.css">
@@ -28,8 +29,7 @@
 <body>
   <!-- ============ PRELOADER ============ -->
   <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__k"><img src="assets/k-logo.webp" alt="" width="752" height="672"></div>
-    <div class="loader__meta"><span>Kendberg</span><span id="count">000</span></div>
+    <div class="loader__k"><img src="assets/k-logo.webp" alt="" width="420" height="375"></div>
   </div>
 
   <a class="skip" href="#main">Skip to content</a>
@@ -41,25 +41,13 @@
         <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
       </a>
       <nav class="nav__links" aria-label="Primary">
-        <a href="firm.html">About</a>
-        <!-- <a href="careers.html">Careers</a> -->
-        <a href="contact.html" class="nav__plain">Contact</a>
+        <a href="/about">About</a>
+        <!-- <a href="/careers">Careers</a> -->
+        <a href="/contact" class="nav__plain">Contact</a>
       </nav>
-      <a href="login.html" class="pill nav__cta">Login</a>
-      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"
-        aria-controls="menu"><span></span><span></span></button>
+      <a href="/login" class="pill nav__cta">Login</a>
     </div>
   </header>
-
-  <div class="menu" id="menu" aria-hidden="true">
-    <nav aria-label="Mobile">
-      <a href="firm.html"><i>01</i>About</a>
-      <!-- <a href="careers.html"><i>02</i>Careers</a> -->
-      <a href="contact.html"><i>02</i>Contact</a>
-      <a href="login.html"><i>03</i>Login</a>
-    </nav>
-    <p class="menu__foot">ayushtawary@gmail.com</p>
-  </div>
 
   <main id="main">
 
@@ -71,6 +59,10 @@
       <div class="hero__body wrap">
         <h1 class="hero__title fade">Kendberg is a proprietary trading firm that integrates mathematical modelling and
           statistical research to develop systematic approaches to financial markets.</h1>
+        <div class="hero__cta fade">
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+        </div>
       </div>
 
     </section>
@@ -94,7 +86,7 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="lenis.min.js" defer></script>
   <script src="main.js" defer></script>
 </body>
 

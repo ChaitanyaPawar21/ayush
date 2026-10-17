@@ -15,10 +15,10 @@
 <body>
   <header class="nav solid">
     <div class="nav__in">
-      <a href="index.html" class="brand" aria-label="Kendberg home">
+      <a href="/" class="brand" aria-label="Kendberg home">
         <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
       </a>
-      <a href="admin.html" class="pill nav__cta" id="admin-link" hidden>Admin</a>
+      <a href="/admin" class="pill nav__cta" id="admin-link" hidden>Admin</a>
       <button type="button" class="pill nav__cta" id="logout">Log out</button>
     </div>
   </header>
@@ -91,11 +91,11 @@
 
     $('sheet-pick').addEventListener('change', renderSheet);
     $('cur-dl').addEventListener('click', () => downloadReport(current.name).catch(e => toast(e.message)));
-    $('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.replace('index.html'); });
+    $('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.replace('/'); });
 
     sb.auth.getSession().then(async ({ data }) => {
       const user = data.session?.user;
-      if (!user) return location.replace('login.html');
+      if (!user) return location.replace('/login');
       $('who').textContent = user.user_metadata?.name || user.email;
       $('admin-link').hidden = !isAdmin(user);
       $('dash').style.visibility = '';

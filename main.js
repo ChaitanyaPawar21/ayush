@@ -2,7 +2,6 @@
 const GA_ID = '';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const root = document.documentElement;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -18,9 +17,9 @@ const scrollTo = el => lenis ? lenis.scrollTo(el, { offset: -10, duration: 1.8 }
 
 // ---------- Preloader ----------
 const count = $('#count');
-const finishLoad = () => { root.classList.remove('is-loading'); root.classList.add('loaded'); field.start(); };
+const finishLoad = () => { root.classList.remove('is-loading'); root.classList.add('loaded'); };
 if (reduce) {
-  finishLoad.pending = true;
+  finishLoad();
 } else {
   lenis?.stop();
   const t0 = performance.now(), dur = 1700;
@@ -32,111 +31,6 @@ if (reduce) {
   })(t0);
 }
 
-// ---------- Hero field: noise settling into a normal distribution ----------
-const field = (() => {
-  const c = $('#field'), ctx = c.getContext('2d'), hero = $('.hero');
-  let W, H, dpr, dots = [], free = [], cols = [], gap, r, t0 = 0, running = false, visible = true, started = false;
-  const mouse = { x: -9999, y: -9999 };
-
-  function build() {
-    dpr = Math.min(devicePixelRatio || 1, 2);
-    W = c.clientWidth; H = c.clientHeight;
-    c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const mobile = W < 700;
-    const bins = mobile ? 25 : 45;
-    const x0 = mobile ? W * .04 : W * .36, x1 = W * (mobile ? .96 : .97);
-    const bw = (x1 - x0) / bins;
-    gap = bw * .62; r = Math.max(1, bw * .13);
-    const base = H * (mobile ? .9 : .86), maxH = Math.floor(H * (mobile ? .42 : .55) / gap), sd = bins / 6.4;
-    dots = []; cols = [];
-    for (let i = 0; i < bins; i++) {
-      const z = (i - (bins - 1) / 2) / sd, h = Math.round(maxH * Math.exp(-z * z / 2));
-      const x = x0 + bw * (i + .5);
-      cols.push({ x, h });
-      for (let k = 0; k < h; k++) dots.push({
-        i, k, h, x, ty: base - k * gap,
-        sx: Math.random() * W, sy: Math.random() * H, delay: Math.random() * 1.1,
-        ox: 0, oy: 0, a: .16 + .5 * (k / maxH)
-      });
-    }
-    free = Array.from({ length: mobile ? 50 : 110 }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25 }));
-    Object.assign(field, { base, maxH, sd, x0, bw, bins });
-  }
-
-  const easeOut = t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
-
-  function frame(now) {
-    if (!running) return;
-    const t = (now - t0) / 1000;
-    ctx.clearRect(0, 0, W, H);
-
-    // drifting noise
-    ctx.fillStyle = 'rgba(236,232,225,.14)';
-    ctx.beginPath();
-    for (const p of free) {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0; if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      ctx.moveTo(p.x + r * .8, p.y); ctx.arc(p.x, p.y, r * .8, 0, 6.283);
-    }
-    ctx.fill();
-
-    // histogram dots, bucketed by alpha to keep draw calls low
-    const buckets = [[], [], [], [], []];
-    let settled = 1;
-    for (const d of dots) {
-      const p = easeOut(clamp((t - d.delay) / 2.4, 0, 1));
-      settled = Math.min(settled, p);
-      const breathe = 1 + .045 * Math.sin(t * .9 + d.i * .32);
-      let x = d.sx + (d.x - d.sx) * p;
-      let y = d.sy + ((field.base - (field.base - d.ty) * breathe) - d.sy) * p;
-      // gentle repulsion from the cursor
-      const dx = x - mouse.x, dy = y - mouse.y, dist = Math.hypot(dx, dy);
-      let tx = 0, ty = 0;
-      if (dist < 110) { const f = (110 - dist) / 110 * 22; tx = dx / (dist || 1) * f; ty = dy / (dist || 1) * f; }
-      d.ox += (tx - d.ox) * .08; d.oy += (ty - d.oy) * .08;
-      x += d.ox; y += d.oy;
-      buckets[Math.min(4, Math.floor(d.a * 7))].push(x, y);
-    }
-    buckets.forEach((b, bi) => {
-      if (!b.length) return;
-      ctx.fillStyle = `rgba(236,232,225,${.12 + bi * .12})`;
-      ctx.beginPath();
-      for (let j = 0; j < b.length; j += 2) { ctx.moveTo(b[j] + r, b[j + 1]); ctx.arc(b[j], b[j + 1], r, 0, 6.283); }
-      ctx.fill();
-    });
-
-    // the fitted density curve fades in once the dots settle
-    const ca = clamp((t - 2.2) / 1.5, 0, 1);
-    if (ca > 0) {
-      ctx.strokeStyle = `rgba(225,38,46,${.55 * ca})`; ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let j = 0; j <= 160; j++) {
-        const fi = j / 160 * (field.bins - 1), z = (fi - (field.bins - 1) / 2) / field.sd;
-        const breathe = 1 + .045 * Math.sin(t * .9 + fi * .32);
-        const x = field.x0 + field.bw * (fi + .5);
-        const y = field.base - (field.maxH * Math.exp(-z * z / 2) - .3) * gap * breathe - gap * .9;
-        j ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-      }
-      ctx.stroke();
-    }
-    requestAnimationFrame(frame);
-  }
-
-  const play = () => { if (!running && started && visible) { running = true; requestAnimationFrame(frame); } };
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? play() : (running = false); }).observe(hero);
-  hero.addEventListener('pointermove', e => { const b = c.getBoundingClientRect(); mouse.x = e.clientX - b.left; mouse.y = e.clientY - b.top; });
-  hero.addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
-
-  return {
-    start() {
-      build(); started = true; t0 = performance.now();
-      if (reduce) { t0 -= 10000; running = true; frame(performance.now()); running = false; return; } // draw the settled state once
-      play();
-    }
-  };
-})();
-if (finishLoad.pending) finishLoad();
 
 // ---------- Mobile menu ----------
 const burger = $('#burger'), menu = $('#menu');
@@ -175,20 +69,6 @@ function onScroll() {
 }
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
 onScroll();
-
-// ---------- Cursor ring (mouse only) ----------
-if (fine && !reduce) {
-  const cur = $('#cursor');
-  let mx = -100, my = -100, cx = -100, cy = -100;
-  addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; cur.classList.add('on'); }, { passive: true });
-  document.addEventListener('pointerleave', () => cur.classList.remove('on'));
-  (function loop() {
-    cx += (mx - cx) * .16; cy += (my - cy) * .16;
-    cur.style.transform = `translate(${cx}px, ${cy}px)`;
-    requestAnimationFrame(loop);
-  })();
-  document.addEventListener('pointerover', e => cur.classList.toggle('big', !!e.target.closest('a, button, label')));
-}
 
 addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 

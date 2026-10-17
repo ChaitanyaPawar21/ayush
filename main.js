@@ -163,11 +163,6 @@ const io = new IntersectionObserver(es => es.forEach(e => {
 }), { threshold: .12, rootMargin: '0px 0px -60px 0px' });
 $$('.r').forEach(el => io.observe(el));
 
-// ---------- Statement: words light up as you scroll ----------
-const stmt = $('[data-words]');
-stmt.innerHTML = stmt.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
-const words = $$('.w', stmt);
-
 // ---------- Header + scroll-driven bits ----------
 const nav = $('#nav');
 let lastY = 0, ticking = false;
@@ -176,20 +171,10 @@ function onScroll() {
   nav.classList.toggle('solid', y > 30);
   nav.classList.toggle('hide', y > 500 && y > lastY + 2 && !root.classList.contains('menu-open'));
   if (y < lastY - 2) nav.classList.remove('hide');
-  const b = stmt.getBoundingClientRect();
-  const p = clamp((innerHeight * .85 - b.top) / (b.height + innerHeight * .25), 0, 1);
-  const lit = Math.round(p * words.length);
-  words.forEach((w, i) => w.classList.toggle('lit', i < lit));
   lastY = y; ticking = false;
 }
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
 onScroll();
-
-const links = $$('.nav__links a');
-const navIO = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) links.forEach(l => l.classList.toggle('on', l.hash === '#' + e.target.id));
-}), { rootMargin: '-50% 0px -50% 0px' });
-navIO.observe($('#firm'));
 
 // ---------- Cursor ring (mouse only) ----------
 if (fine && !reduce) {

@@ -125,6 +125,12 @@
           const li = reportRow(reportName(f.name), fmtDate(f.created_at), [
             ['View', () => { show(f, true); scrollTo({ top: 0, behavior: 'smooth' }); }],
             ['Download', () => downloadReport(f.name).catch(e => toast(e.message))],
+            ...(isAdmin(user) ? [['Delete', async () => {
+              if (!confirm(`Delete ${reportName(f.name)}? Users will no longer see it.`)) return;
+              const { error } = await sb.storage.from('reports').remove([f.name]);
+              if (error) return toast(error.message);
+              location.reload(); // rebuilds the merged overall view without this file
+            }]] : []),
           ]);
           li.dataset.name = f.name;
           return li;

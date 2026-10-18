@@ -41,6 +41,10 @@
     </header>
 
     <section class="panel">
+      <div class="bar" id="led-scope" hidden>
+        <span class="mono" id="led-scope-name"></span>
+        <button type="button" class="pill" id="led-all">Show overall</button>
+      </div>
       <div class="led" id="ledger" hidden></div>
       <details class="table-toggle" id="sheet-box" hidden><summary class="mono">View full table</summary>
         <div class="sheet" id="sheet"></div>
@@ -62,34 +66,48 @@
   <script>
     // ponytail: client-side guard only; the reports bucket itself is protected by storage RLS (logged-in users only).
     const $ = id => document.getElementById(id);
-    let wb = null, current = null;
+    let wb = null, current = null, overall = null; // overall = { tx, at }: every ledger merged
+    const books = {}; // report name → workbook promise, so each file downloads once
+    const book = name => books[name] ||= sb.storage.from('reports').download(name)
+      .then(({ data, error }) => { if (error) throw error; return data.arrayBuffer(); }).then(b => XLSX.read(b));
+    const firstSheet = w => XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]]);
 
     function renderSheet() {
       // sheet_to_html escapes cell values.
       $('sheet').innerHTML = XLSX.utils.sheet_to_html(wb.Sheets[$('sheet-pick').value], { header: '', footer: '' });
     }
 
-    async function show(file) {
+    function showOverall() {
+      $('led-scope').hidden = true;
+      $('ledger').hidden = !overall || !renderLedger($('ledger'), overall.tx, overall.at);
+    }
+
+    // single: also swap the dashboard to just this file (the View button); otherwise only the table changes.
+    async function show(file, single) {
       current = file;
       $('cur-title').textContent = reportName(file.name);
       $('cur-date').textContent = fmtDate(file.created_at);
       $('cur-bar').hidden = false;
       document.querySelectorAll('#past li').forEach(li => li.classList.toggle('on', li.dataset.name === file.name));
       try {
-        const { data, error } = await sb.storage.from('reports').download(file.name);
-        if (error) throw error;
-        wb = XLSX.read(await data.arrayBuffer());
-        const isLedger = renderLedger($('ledger'), XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
-        $('ledger').hidden = !isLedger;
-        $('sheet-box').open = !isLedger; // ledgers show the summary; other reports open straight to the table
+        wb = await book(file.name);
+        const tx = txRows(firstSheet(wb));
+        $('sheet-box').open = !tx; // ledgers are summarised above; other reports open straight to the table
+        if (single && tx) {
+          renderLedger($('ledger'), tx, file.created_at, true);
+          $('ledger').hidden = false;
+          $('led-scope-name').textContent = 'Showing ' + reportName(file.name) + ' only';
+          $('led-scope').hidden = false;
+        } else if (single) showOverall();
         $('sheet-pick').replaceChildren(...wb.SheetNames.map(n => new Option(n, n)));
         $('sheet-pick').hidden = wb.SheetNames.length < 2;
         renderSheet();
         $('sheet-box').hidden = false;
-      } catch (e) { $('sheet-box').hidden = $('ledger').hidden = true; toast('Could not open this report: ' + e.message); }
+      } catch (e) { $('sheet-box').hidden = true; toast('Could not open this report: ' + e.message); }
     }
 
     $('sheet-pick').addEventListener('change', renderSheet);
+    $('led-all').addEventListener('click', showOverall);
     $('cur-dl').addEventListener('click', () => downloadReport(current.name).catch(e => toast(e.message)));
     $('logout').addEventListener('click', async () => { await sb.auth.signOut(); location.replace('/'); });
 
@@ -105,13 +123,18 @@
         if (!files.length) return;
         $('past').replaceChildren(...files.map(f => {
           const li = reportRow(reportName(f.name), fmtDate(f.created_at), [
-            ['View', () => { show(f); scrollTo({ top: 0, behavior: 'smooth' }); }],
+            ['View', () => { show(f, true); scrollTo({ top: 0, behavior: 'smooth' }); }],
             ['Download', () => downloadReport(f.name).catch(e => toast(e.message))],
           ]);
           li.dataset.name = f.name;
           return li;
         }));
         show(files[0]);
+        // Investor view: every ledger upload merged into one timeline (files are newest first; merge wants oldest first).
+        // ponytail: downloads every report on each visit; fine for a few hundred small files.
+        const ledgers = (await Promise.all(files.map(f => book(f.name).then(w => ({ f, tx: txRows(firstSheet(w)) }), () => null)))).filter(l => l?.tx);
+        if (ledgers.length) overall = { tx: mergeLedgers(ledgers.map(l => l.tx).reverse()), at: ledgers[0].f.created_at };
+        if ($('led-scope').hidden) showOverall(); // unless a View click already picked one file
       } catch (e) { toast('Could not load reports: ' + e.message); }
     });
   </script>

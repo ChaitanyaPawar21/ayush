@@ -5,7 +5,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_LTHR1le5b7qgj-LXK8Giwg_JfQYbMHt';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Admin emails. Keep in sync with public.is_admin() (database) and the admin-users edge function — those enforce it; this only shows/hides UI.
-const ADMINS = ['ayushtawary@gmail.com', 'chaitanya.claude21@gmail.com', 'chaitanya21pawar@gmail.com'];
+const ADMINS = ['ayushtawary@gmail.com', 'chaitanya.claude21@gmail.com', 'chaitanya21pawar@gmail.com', 'ayushtawar@kendberg.com'];
 const isAdmin = user => ADMINS.includes((user?.email || '').toLowerCase());
 
 // Report files are stored as "<timestamp>__<original name>"; show the original name.

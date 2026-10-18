@@ -1,41 +1,42 @@
-// Run: node ledger.test.js — checks the ledger maths against the sample report in xcel/.
+// Run: node ledger.test.js — checks the ledger maths against the sample reports in xcel/.
 const fs = require('fs'), vm = require('vm'), assert = require('assert');
 const ctx = {};
 vm.runInNewContext(fs.readFileSync(__dirname + '/ledger.js', 'utf8'), ctx);
 
-const rows = [
-  ['2026-10-09', '2026-10-08', 'Obligation Of Derivative Market: FNO', 1231.25, 0],
-  ['2026-10-08', '2026-10-07', 'Obligation Of Derivative Market: FNO', 1009.76, 0],
-  ['2026-10-07', '2026-10-06', 'Obligation Of Derivative Market: FNO', 2359.77, 0],
-  ['2026-10-06', '2026-10-05', 'Obligation Of Derivative Market: FNO', 4349.78, 0],
-  ['2026-10-05', '2026-10-05', 'Online Fund Received Ref# 726998822786', 0, 171194.15],
-  ['2026-10-05', '2026-10-01', 'Obligation Of Derivative Market: FNO', 0, 1341.83],
-  ['2026-10-01', '2026-09-30', 'Obligation Of Derivative Market: FNO', 2535.98, 0],
-  ['2026-09-30', '2026-09-30', 'Online Fund Received Ref# 327264922736', 0, 29900],
-  ['2026-09-23', '2026-09-23', 'Online Fund Received Ref# 577934312666', 0, 100],
-  ['2026-09-05', '2026-09-05', 'MONTHLY SETTLEMENT(A/c Settoff)', 7.86, 0],
-  ['2026-07-28', '2026-07-27', 'Obligation Of Settlement: 2026139(NORMAL T+1)', 0.24, 0],
-  ['2026-07-21', '2026-07-20', 'Obligation Of Settlement: 2026134(NORMAL T+1)', 1.9, 0],
-  ['2026-07-20', '2026-07-20', 'Online Fund Received Ref# 261767662016', 0, 10],
-  ['2026-04-13', '2026-04-13', 'NEFT - FDRL0007778', 2082.08, 0],
-  ['2026-04-13', '2026-04-10', 'Obligation Of Derivative Market: MCX/COM', 17.92, 0],
-  ['2026-04-10', '2026-04-10', 'Online Fund Received Ref# 373753991006', 0, 2100],
-  ['2026-03-31', '2026-03-31', 'Op. Balance', 13493.4, 0],
-  ['2026-03-31', '2026-03-31', 'Op. Balance', 54.02, 0],
-  ['2026-03-31', '2026-03-31', 'Op. Balance', 0, 13547.42],
-  ['2026-03-31', '2026-03-31', 'Op. Balance', 0, 0],
-].map(([f, t, n, d, c]) => ({ 'Financial Date': f, 'Trade Date': t, Narration: n, Debit: d, Credit: c }));
+// Old broker format (newest-first, opening balance rows).
+const old = [
+  ['2026-10-09', 'Obligation Of Derivative Market: FNO', 1231.25, 0],
+  ['2026-10-05', 'Online Fund Received Ref# 726998822786', 0, 171194.15],
+  ['2026-10-05', 'Obligation Of Derivative Market: FNO', 0, 1341.83],
+  ['2026-04-13', 'NEFT - FDRL0007778', 2082.08, 0],
+  ['2026-03-31', 'Op. Balance', 13493.4, 0],
+  ['2026-03-31', 'Op. Balance', 0, 13547.42],
+].map(([f, n, d, c]) => ({ 'Financial Date': f, 'Trade Date': f, Narration: n, Debit: d, Credit: c }));
+const o = ctx.analyzeLedger(ctx.txRows(old));
+assert.strictEqual(o.capital, 169166.09);              // 54.02 opening + 171194.15 in − 2082.08 out
+assert.strictEqual(o.total, 110.58);
+assert.strictEqual(o.fund, 169276.67);
+assert.strictEqual(ctx.txRows([{ Name: 'x', Amount: 1 }]), null); // non-ledger → table only
 
-const s = ctx.analyzeLedger(rows);
-assert.strictEqual(s.opening, 0);
-assert.strictEqual(s.added, 203304.15);
-assert.strictEqual(s.withdrawn, 2089.94);
-assert.strictEqual(s.trading, -10164.77);
-assert.strictEqual(s.closing, 191049.44);              // matches the ledger's own Running Balance
-assert.strictEqual(s.balance.at(-1).value, s.closing);
-assert.strictEqual(s.asOf, '2026-10-09');
-assert.strictEqual(s.pnl.length, 9);
-assert.strictEqual(s.greenDays, 1);
-assert.strictEqual(s.pnl.find(d => d.date === '2026-10-01').value, 1341.83);
-assert.strictEqual(ctx.analyzeLedger([{ Name: 'x', Amount: 1 }]), null); // non-ledger → table only
+// New broker format, condensed from the Sep 2026 ledger in xcel/ (Bill + JV = P&L after charges).
+const row = (d, t, dr, cr) => ({ Voucherdate: d, Type: t, Segment: 'NSE_FNO', Narration: t, Debited_amount: dr, Credited_amount: cr });
+const sep = [
+  row('2026-09-01', 'Receipt', 0, 145000), row('2026-09-01', 'Bill', 4960.42, 0), row('2026-09-02', 'Bill', 0, 22386.98),
+  row('2026-09-09', 'Payment', 40000, 0), row('2026-09-16', 'JV', 59, 0), row('2026-09-30', 'JV', 354, 0),
+];
+const oct = [row('2026-10-13', 'Receipt', 0, 50000), row('2026-10-14', 'Bill', 1696.19, 0)];
+// Re-export of Sep 30 uploaded later replaces that day instead of adding to it.
+const sep30 = [row('2026-09-30', 'JV', 354, 0)];
+const s = ctx.analyzeLedger(ctx.mergeLedgers([sep, oct, sep30].map(ctx.txRows)));
+assert.strictEqual(s.capital, 155000);
+assert.strictEqual(s.total, 15317.37);                  // 17426.56 trading − 413 charges − 1696.19
+assert.strictEqual(s.fund, 170317.37);
+assert.strictEqual(s.today.date, '2026-10-14');
+assert.strictEqual(s.today.pnl, -1696.19);
+assert.strictEqual(s.month.value, -1696.19);
+assert.strictEqual(s.months.map(m => m.value).join(), "17013.56,-1696.19");
+assert.strictEqual(s.months[0].pct.toFixed(2), '16.20'); // of 1,05,000 invested at end of Sep
+assert.strictEqual(s.days.length, 5);
+assert.strictEqual(s.days.at(-1).cum, s.total);
+assert.strictEqual(s.growth.at(-1).value, s.fund);
 console.log('ledger ok');

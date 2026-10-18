@@ -157,6 +157,8 @@ button.pill { background: none; cursor: pointer; }
 .pillars span { color: var(--ink); }
 .pillars h3 { margin: 0; font: 400 clamp(26px, 2.6vw, 38px)/1.1 var(--serif); color: var(--ink); transition: transform .6s var(--ease); }
 .pillars p { margin: 0; max-width: 46ch; }
+/* About page uses the home hero's typeface throughout (mono labels excepted) */
+.about :is(h2, h3, p, .model__n) { font-family: "Newsreader", var(--serif); }
 @media (hover: hover) { .pillars li:hover h3 { transform: translateX(10px); } } /* no stuck hover after a tap */
 @media (max-width: 820px) { .pillars li { grid-template-columns: 4ch 1fr; } .pillars p { grid-column: 2; } }
 
@@ -220,20 +222,20 @@ button.pill { background: none; cursor: pointer; }
 
 /* ledger summary (ledger.js); gain/loss pair checked for colour-blind separation on --bg-2 */
 .led { --gain: #36a383; --loss: #e1262e; margin-top: 22px; }
-.led__top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px clamp(28px, 4vw, 64px); align-items: end; }
+/* fund value + growth chart side by side so both are in view on open; KPIs span below */
+.led__top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(20px, 2.4vw, 32px); align-items: end; }
 .led__big { margin: 14px 0 0; font: 400 clamp(52px, 6.4vw, 100px)/.95 var(--serif); letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .led__big span { color: var(--mute); font-size: .42em; letter-spacing: 0; }
 .led__bridge { margin: 14px 0 0; color: var(--ink-2); white-space: pre-wrap; word-spacing: .2em; }
-.led__kpis { display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+.led__kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin: 0; border-top: 1px solid var(--line); }
 .led__kpis > div { padding: 14px 0 14px 20px; border-left: 1px solid var(--line); }
-.led__kpis > div:nth-child(n+3) { border-top: 1px solid var(--line); }
 .led__kpis dd { margin: 6px 0 0; font: 400 clamp(26px, 2.4vw, 36px)/1 var(--serif); color: var(--ink); white-space: nowrap; }
 .led__kpis dd i { font: normal .45em/1 var(--sans); margin-right: .45em; vertical-align: .35em; }
 .led__kpis dd small { font-size: .5em; color: var(--mute); }
 .led__kpis p { margin: 6px 0 0; }
 .led__gain { color: var(--gain); fill: var(--gain); }
 .led__loss { color: var(--loss); fill: var(--loss); }
-.led__charts { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 2.4vw, 32px); }
+.led__charts { display: grid; gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 2.4vw, 32px); }
 .led__fig { position: relative; margin: 0; padding: 16px 18px; border: 1px solid var(--line); background: var(--bg-2); }
 .led__fig figcaption { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 8px; }
 .led__fig figcaption :first-child { margin-left: auto; }
@@ -251,7 +253,14 @@ button.pill { background: none; cursor: pointer; }
 .led__hit { fill: transparent; pointer-events: all; }
 .led__tip { position: absolute; z-index: 2; translate: -50% calc(-100% - 12px); display: grid; gap: 2px; padding: 9px 12px; border: 1px solid var(--line-2); background: var(--bg); pointer-events: none; white-space: nowrap; }
 .led__tip .v { color: var(--ink); font-size: 15px; }
-@media (max-width: 960px) { .led__charts, .led__top { grid-template-columns: 1fr; } }
+.led__daily { margin-top: clamp(16px, 2vw, 28px); }
+.led__daily .sheet { margin-top: 0; border: 0; }
+.led__daily th { position: sticky; top: 0; background: var(--bg-2); color: var(--mute); font: 400 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; text-align: right; }
+.led__daily td { text-align: right; font-variant-numeric: tabular-nums; }
+.led__daily :is(th, td):first-child { text-align: left; }
+.led__daily .led__gain { color: var(--gain); }
+.led__daily .led__loss { color: var(--loss); }
+@media (max-width: 960px) { .led__top { grid-template-columns: 1fr; } }
 .table-toggle { margin-top: 18px; }
 .table-toggle summary { cursor: pointer; width: max-content; }
 .table-toggle summary:hover { color: var(--ink); }

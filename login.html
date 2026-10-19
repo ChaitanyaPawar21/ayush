@@ -37,6 +37,7 @@
           placeholder=" "><span>Password</span></label>
       <button class="btn" type="submit"><span>Log in</span><i aria-hidden="true">→</i></button>
     </form>
+    <p class="body"><button type="button" class="ulink" id="forgot">Forgot password?</button></p>
     <p class="body">Access by <a class="ulink" href="/contact">Invite</a> only</p>
   </main>
 
@@ -57,6 +58,16 @@
       btn.disabled = false;
       if (error) return toast(error.message);
       location.replace('/dashboard');
+    });
+
+    // Same message whether or not the account exists, so this can't be used to probe emails.
+    document.getElementById('forgot').addEventListener('click', async e => {
+      const email = form.email.value.trim();
+      if (!form.email.checkValidity() || !email) return toast('Enter your email above first.');
+      e.target.disabled = true;
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset' });
+      e.target.disabled = false;
+      toast(error ? error.message : 'If that email has an account, a reset link is on its way.');
     });
   </script>
 </body>

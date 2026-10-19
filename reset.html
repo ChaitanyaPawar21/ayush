@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Reset password — Kendberg</title>
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="icon" type="image/png" href="assets/favicon-k.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="nav solid">
+    <div class="nav__in">
+      <a href="/" class="brand" aria-label="Kendberg home">
+        <img class="brand__k" src="assets/k-logo-sm.webp" alt="" width="34" height="30"><span>Kendberg</span>
+      </a>
+      <a href="/about" class="nav__plain">About</a>
+      <a href="/contact" class="nav__plain">Contact</a>
+      <a href="/login" class="pill nav__cta">Login</a>
+    </div>
+  </header>
+
+  <main class="auth wrap">
+    <h1 class="h2">New password</h1>
+    <form class="form" id="reset" method="post">
+      <label class="f"><input type="password" name="password" required minlength="8" autocomplete="new-password"
+          placeholder=" "><span>New password</span></label>
+      <label class="f"><input type="password" name="confirm" required minlength="8" autocomplete="new-password"
+          placeholder=" "><span>Confirm password</span></label>
+      <button class="btn" type="submit"><span>Set password</span><i aria-hidden="true">→</i></button>
+    </form>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script>
+    const form = document.getElementById('reset');
+    // Expired/used links come back as #error_description=...
+    const linkError = new URLSearchParams(location.hash.slice(1)).get('error_description');
+
+    // The emailed link signs the user in (recovery session); without one there's nothing to update.
+    sb.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        form.querySelector('button').disabled = true;
+        toast((linkError || 'Reset link is invalid or expired') + '. Request a new one from Login.');
+      }
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (form.password.value !== form.confirm.value) return toast('Passwords do not match.');
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      const { error } = await sb.auth.updateUser({ password: form.password.value });
+      btn.disabled = false;
+      if (error) return toast(error.message);
+      toast('Password updated.');
+      setTimeout(() => location.replace('/dashboard'), 1200);
+    });
+  </script>
+</body>
+
+</html>

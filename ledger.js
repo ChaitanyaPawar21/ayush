@@ -44,16 +44,19 @@ function mergeLedgers(list) {
   return Object.keys(byDate).sort().flatMap(d => byDate[d]);
 }
 
-// Capital = net money invested (in − out); fund value = capital + cumulative P&L, i.e. the ledger balance.
-// Returns are P&L as a % of capital invested at that point.
-function analyzeLedger(tx) {
+// Every ledger is the same account with a fixed ₹2,00,000 invested; uploads are each day's trading.
+// ponytail: deposits/withdrawals in the ledger are ignored; change INVESTED if the invested amount changes.
+const INVESTED = 200000;
+
+// Fund value = invested capital + cumulative P&L. Returns are P&L as a % of capital.
+function analyzeLedger(tx, capital = INVESTED) {
   if (!tx.length) return null;
   const days = [];
-  let capital = 0, cum = 0;
+  let cum = 0;
   for (const t of tx) {
     if (days.at(-1)?.date !== t.date) days.push({ date: t.date, pnl: 0, traded: false });
     const d = days.at(-1);
-    if (t.kind === 'cash') capital += t.amt; else { d.pnl += t.amt; cum += t.amt; d.traded = true; }
+    if (t.kind === 'pnl') { d.pnl += t.amt; cum += t.amt; d.traded = true; }
     d.capital = capital; d.cum = cum;
   }
   const pct = (v, base) => base > 0 ? v / base * 100 : null;
@@ -161,9 +164,15 @@ const kpi = (label, value, note) => `<div><dt class="mono">${label}</dt><dd>${va
 
 // Fills `el` with the investor view of a ledger timeline; returns false (el untouched) if there's nothing to show.
 // daily: bar chart shows each day's P&L instead of each month's (for a single month's ledger).
-function renderLedger(el, tx, updatedAt, daily = false) {
+// from: only chart/list days from this date on; fund value and totals still come from the whole of tx.
+function renderLedger(el, tx, updatedAt, daily = false, from = '') {
   const s = analyzeLedger(tx);
   if (!s) return false;
+  if (from) {
+    s.days = s.days.filter(d => d.date >= from);
+    s.months = s.months.filter(m => m.date >= from.slice(0, 7));
+    s.growth = s.growth.filter(p => p.date >= from);
+  }
   const big = inr(s.fund, 2).split('.');
   const bars = daily ? s.days.map(d => ({ date: d.date, value: d.pnl, pct: d.pct })) : s.months;
   el.innerHTML = `

@@ -94,7 +94,9 @@
         const tx = txRows(firstSheet(wb));
         $('sheet-box').open = !tx; // ledgers are summarised above; other reports open straight to the table
         if (single && tx) {
-          renderLedger($('ledger'), tx, file.created_at, true);
+          // Fund value comes from every ledger up to this file's last day, so it's the real fund, not ₹2L + this file's P&L.
+          const end = tx.at(-1).date;
+          renderLedger($('ledger'), overall ? overall.tx.filter(t => t.date <= end) : tx, file.created_at, true, tx[0].date);
           $('ledger').hidden = false;
           $('led-scope-name').textContent = 'Showing ' + reportName(file.name) + ' only';
           $('led-scope').hidden = false;

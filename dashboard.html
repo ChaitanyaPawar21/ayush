@@ -51,7 +51,7 @@
       </details>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="past-box" hidden>
       <p class="mono">Past reports</p>
       <ul class="rows" id="past"><li class="empty">None yet.</li></ul>
     </section>
@@ -117,7 +117,7 @@
       const user = data.session?.user;
       if (!user) return location.replace('/login');
       $('who').textContent = user.user_metadata?.name || user.email;
-      $('admin-link').hidden = !isAdmin(user);
+      $('admin-link').hidden = $('past-box').hidden = !isAdmin(user); // past reports list is admin-only
       $('dash').style.visibility = '';
 
       try {

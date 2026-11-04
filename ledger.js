@@ -185,7 +185,7 @@ function renderLedger(el, tx, updatedAt, daily = false, from = '') {
     <dl class="led__kpis">
       ${kpi('Total P&amp;L', arrow(s.total) + signed(s.total), 'Since inception')}
       ${kpi('Overall Return', arrow(s.total) + pctTxt(s.totalPct), 'Of capital invested')}
-      ${s.today ? kpi('Today’s P&amp;L', arrow(s.today.pnl) + signed(s.today.pnl), `${pctTxt(s.today.pct)} · ${fmtDate(s.today.date)}`) : ''}
+      ${s.today ? kpi('Latest P&amp;L', arrow(s.today.pnl) + signed(s.today.pnl), `${pctTxt(s.today.pct)} · ${fmtDate(s.today.date)}`) : ''}
       ${s.month ? kpi('Monthly P&amp;L', arrow(s.month.value) + signed(s.month.value), `${pctTxt(s.month.pct)} · ${monthName(s.month.date)}`) : ''}
     </dl></div>
     <div class="led__charts">

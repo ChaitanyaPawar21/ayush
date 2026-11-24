@@ -43,4 +43,8 @@ assert.strictEqual(day.today.date, '2026-10-19');
 assert.strictEqual(s.days.length, 5);
 assert.strictEqual(s.days.at(-1).cum, s.total);
 assert.strictEqual(s.growth.at(-1).value, s.fund);
+// Fund Growth axis hugs the data instead of starting at ₹0.
+assert.strictEqual(ctx.fitTicks([195039.58, 217426.56]).join(), '190000,200000,210000,220000');
+assert.strictEqual(ctx.fitTicks([200000]).join(), '200000,201000');
+assert.strictEqual(ctx.fitTicks([-1500, 900]).join(), '-2000,-1000,0,1000');
 console.log('ledger ok');

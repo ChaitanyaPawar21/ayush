@@ -75,7 +75,7 @@ function analyzeLedger(tx, capital = INVESTED) {
 }
 
 const inr = (n, dp = 0) => (n < 0 ? '−' : '') + '₹' + Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: dp, maximumFractionDigits: dp });
-const inrAxis = n => n >= 1e5 ? '₹' + +(n / 1e5).toFixed(1) + 'L' : n >= 1e3 ? '₹' + +(n / 1e3).toFixed(1) + 'k' : '₹' + n;
+const inrAxis = n => n >= 1e5 ? '₹' + +(n / 1e5).toFixed(3) + 'L' : n >= 1e3 ? '₹' + +(n / 1e3).toFixed(1) + 'k' : '₹' + n;
 const shortDate = d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 const fmtDateTime = d => new Date(d).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
 const monthName = (d, month = 'long') => new Date(d).toLocaleDateString('en-IN', { month, year: 'numeric' });
@@ -84,6 +84,14 @@ const pctTxt = p => p == null ? '—' : (p > 0 ? '+' : p < 0 ? '−' : '') + Mat
 const tone = n => n < 0 ? 'led__loss' : 'led__gain';
 const arrow = n => n ? `<i class="${tone(n)}" aria-hidden="true">${n < 0 ? '▼' : '▲'}</i>` : '';
 const niceMax = v => { const p = 10 ** Math.floor(Math.log10(v || 1)); return [1, 2, 2.5, 5, 10].find(m => m * p >= v) * p; };
+
+// Round axis ticks hugging the data (not from ₹0) so day-to-day moves are visible.
+// Steps are at least ₹1,000 so a few rupees of charges don't look like a crash.
+function fitTicks(vals) {
+  const lo = Math.min(...vals), hi = Math.max(...vals), step = niceMax(Math.max((hi - lo) / 4, 1000));
+  const a = Math.floor(lo / step), b = Math.max(Math.ceil(hi / step), a + 1);
+  return Array.from({ length: b - a + 1 }, (_, i) => (a + i) * step);
+}
 
 // Chart frame shared by both charts (SVG user units; the SVG scales to its container).
 const W = 800, H = 220, L = 56, R = 16, T = 16, B = 34;
@@ -104,12 +112,11 @@ function tipAt(fig, svg, x, y, html) {
 
 function balanceChart(fig, pts) {
   const t0 = +new Date(pts[0].date), t1 = +new Date(pts.at(-1).date) || t0 + 1;
-  const max = niceMax(Math.max(...pts.map(p => p.value), 1)), min = Math.min(0, ...pts.map(p => p.value));
+  const ticks = fitTicks(pts.map(p => p.value)), min = ticks[0], max = ticks.at(-1);
   const x = d => L + (W - L - R) * ((+new Date(d) - t0) / (t1 - t0 || 1));
   const y = v => T + (H - T - B) * (1 - (v - min) / (max - min));
   // Step line: the balance holds until the next booking.
   const line = pts.map((p, i) => (i ? `H${x(p.date)}V${y(p.value)}` : `M${x(p.date)},${y(p.value)}`)).join('');
-  const ticks = [0, max / 2, max];
   const xt = pts.length > 1 ? [pts[0], pts.at(-1)] : [pts[0]];
   fig.querySelector('.led__plot').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fund value over time, from ${inr(pts[0].value)} to ${inr(pts.at(-1).value)}">
     <defs><linearGradient id="led-area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ece8e1" stop-opacity=".16"/><stop offset="1" stop-color="#ece8e1" stop-opacity="0"/></linearGradient></defs>
